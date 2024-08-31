@@ -1,4 +1,5 @@
 import type { BunFile } from "bun";
+import { unlink } from "node:fs/promises";
 
 async function readWorkfile(path: string): Promise<BunFile> {
     return Bun.file(path, {
@@ -22,7 +23,7 @@ async function getWorkfileContent(path: string): Promise<string> {
     return await workfile.text();
 }
 
-export function createUseWorkfile(path: string) {
+export function createUseWorkfile(path: string): () => Promise<string> {
     let workfileContent: string | null = null;
     return async (): Promise<string> => {
         if (workfileContent === null) {
@@ -32,7 +33,7 @@ export function createUseWorkfile(path: string) {
     };
 }
 
-export async function deleteWorkfile(path: string) {
+export async function deleteWorkfile(path: string): Promise<void> {
     const workfile = await readWorkfile(path);
     const workfileExists = await workfile.exists();
     if (!workfileExists) {
@@ -41,6 +42,5 @@ export async function deleteWorkfile(path: string) {
     }
 
     // https://bun.sh/guides/write-file/unlink
-    const { unlink } = await import("node:fs/promises");
     await unlink(path);
 }
