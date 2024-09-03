@@ -1,4 +1,9 @@
-import { createUseWorkfile, deleteWorkfile } from "./lib/workfile";
+import { summary } from "./lib/summary";
+import {
+    createUseWorkfile,
+    datetimeFromWorkfileLine,
+    deleteWorkfile,
+} from "./lib/workfile";
 import { resolve } from "path";
 
 const WORK_FILE = resolve(".", ".workfile");
@@ -61,6 +66,17 @@ async function run(command: string) {
             break;
         case "clean":
             await deleteWorkfile(WORK_FILE);
+            break;
+        case "summary":
+            const runningWork = await getRunningWork();
+            if (runningWork) {
+                console.log(
+                    "Work still running, please end it before running summary"
+                );
+                break;
+            }
+            const workfileContent = await useWorkfile();
+            await summary(workfileContent);
             break;
         default:
             throw new Error(`Unknown command: ${command}`);
