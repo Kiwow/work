@@ -23,6 +23,12 @@ async function getWorkfileContent(path: string): Promise<string> {
     return await workfile.text();
 }
 
+export function datetimeFromWorkfileLine(line: string): Date {
+    // start xxx
+    // 0123456
+    return new Date(line.slice(6));
+}
+
 export function createUseWorkfile(path: string): () => Promise<string> {
     let workfileContent: string | null = null;
     return async (): Promise<string> => {

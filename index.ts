@@ -9,7 +9,7 @@ import { resolve } from "path";
 const WORK_FILE = resolve(".", ".workfile");
 const useWorkfile = createUseWorkfile(WORK_FILE);
 
-async function getRunningWork(): Promise<Date | null> {
+export async function getRunningWork(): Promise<Date | null> {
     const workfileContent = await useWorkfile();
     const lastLine = workfileContent.trim().split("\n").at(-1);
     if (!lastLine || lastLine.startsWith("end")) {
@@ -24,7 +24,7 @@ async function getRunningWork(): Promise<Date | null> {
 
     // start xxx
     // 0123456
-    return new Date(lastLine.slice(6));
+    return datetimeFromWorkfileLine(lastLine);
 }
 
 async function startWork() {
