@@ -10,7 +10,7 @@ type WorkConfig = {
 const defaultWorkConfig = (): WorkConfig => ({
     localWorkfile: false,
     summary: {
-        separator: " ",
+        separator: " | ",
         locale: "cs-CZ",
         unit: "minute",
     },

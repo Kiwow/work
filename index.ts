@@ -78,7 +78,11 @@ async function run(command: string) {
                 break;
             }
             const workfileContent = await useWorkfile();
-            await summary(workfileContent);
+            await summary(workfileContent, {
+                locale: config.summary.locale,
+                unit: config.summary.unit,
+                separator: config.summary.separator,
+            });
             break;
         default:
             throw new Error(`Unknown command: ${command}`);

@@ -17,16 +17,17 @@ function dateDiff(from: Date, to: Date, unit: TimeUnit = "minute") {
     return `${duration} ${duration === 1 ? unit : unit.concat("s")}`;
 }
 
-type SummaryOptions = {
+export type SummaryOptions = {
     locale: string;
     unit: TimeUnit;
+    separator: string;
 };
 
 export async function summary(
     workfileContent: string,
-    options: Partial<SummaryOptions> = {}
+    options: SummaryOptions
 ): Promise<void> {
-    const { locale = "cs-CZ", unit = "minute" } = options;
+    const { locale, unit, separator } = options;
 
     const dates = workfileContent
         .trimEnd()
@@ -41,7 +42,6 @@ export async function summary(
 
     const intervals = chunkBy(dates, 2);
     const lengths = intervals.map(([from, to]) => dateDiff(from, to, unit));
-    const separator = " | ";
 
     const summary = zip(intervals, lengths)
         .map(([[from, to], length]) => {
