@@ -23,7 +23,9 @@ async function getConfigFile(
         return await Bun.file(configPath).json();
     } catch (err) {
         if (err instanceof SyntaxError) {
-            console.error(`Failed to read config file:\n${err}`);
+            console.error(
+                `Failed to read config file (using default):\n${err}`
+            );
         }
         // no config file found, use defaults
         return defaultWorkConfig();
