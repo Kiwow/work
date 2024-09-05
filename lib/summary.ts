@@ -6,12 +6,11 @@ type TimeUnit = "minute" | "second";
 function dateDiff(from: Date, to: Date, unit: TimeUnit = "minute") {
     const millis = Number(to) - Number(from);
     let duration: number;
-    if (unit === "minute") {
-        duration = Math.round(millis / (1000 * 60));
-    } else if (unit === "second") {
+    if (unit === "second") {
         duration = Math.round(millis / 1000);
     } else {
-        throw new Error(`Unknown unit: ${unit}`);
+        // minutes by default
+        duration = Math.round(millis / (1000 * 60));
     }
 
     return `${duration} ${duration === 1 ? unit : unit.concat("s")}`;

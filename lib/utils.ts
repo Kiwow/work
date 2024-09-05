@@ -16,6 +16,7 @@ type _TupleOf<T, N extends number, R extends unknown[]> = R["length"] extends N
  * @param chunkSize size of one chunk
  * @returns array of chunks of set size
  * @throws when the array is not evenly divisible into chunks of set size
+ * @throws when chunkSize is zero
  */
 export function chunkBy<T, ChunkSize extends number>(
     arr: Array<T>,
@@ -59,4 +60,9 @@ export function zip<T, U>(one: Array<T>, other: Array<U>): Array<[T, U]> {
         zipped.push([one[i], other[i]]);
     }
     return zipped;
+}
+
+export function panic(message: string, exitCode = 1): never {
+    console.error(message);
+    process.exit(exitCode);
 }

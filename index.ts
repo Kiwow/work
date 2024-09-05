@@ -1,5 +1,6 @@
 import { loadConfig } from "./lib/config";
 import { summary } from "./lib/summary";
+import { panic } from "./lib/utils";
 import {
     createUseWorkfile,
     datetimeFromWorkfileLine,
@@ -19,7 +20,7 @@ export async function getRunningWork(): Promise<Date | null> {
     }
 
     if (!lastLine.startsWith("start")) {
-        throw new Error(
+        panic(
             `Last line corrupted in workfile. file contents:\n${workfileContent}`
         );
     }
@@ -32,7 +33,7 @@ export async function getRunningWork(): Promise<Date | null> {
 async function startWork() {
     const runningWork = await getRunningWork();
     if (runningWork) {
-        throw new Error("Work already running, won't start it");
+        panic("Work already running, won't start it");
     }
 
     const datetime = new Date();
@@ -47,7 +48,7 @@ async function startWork() {
 async function endWork() {
     const runningWork = await getRunningWork();
     if (!runningWork) {
-        throw new Error("No work running, won't end it");
+        panic("No work running, won't end it");
     }
 
     const datetime = new Date();
@@ -85,11 +86,11 @@ async function run(command: string) {
             });
             break;
         default:
-            throw new Error(`Unknown command: ${command}`);
+            panic(`Unknown command: ${command}`);
     }
 }
 
 if (process.argv.length < 3) {
-    throw new Error("Provide a command");
+    panic("Provide a command");
 }
 await run(process.argv[2]);
