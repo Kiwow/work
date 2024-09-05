@@ -1,5 +1,10 @@
-import { chunkBy, zip } from "./utils";
-import { datetimeFromWorkfileLine } from "./workfile";
+import { chunkBy, panic, zip } from "./utils";
+import {
+    datetimeFromWorkfileLine,
+    getRunningWork,
+    getWorkfileIfExists,
+    readWorkfile,
+} from "./workfile";
 
 type TimeUnit = "minute" | "second";
 
@@ -22,7 +27,7 @@ export type SummaryOptions = {
     separator: string;
 };
 
-export async function summary(
+export async function logSummary(
     workfileContent: string,
     options: SummaryOptions
 ): Promise<void> {
@@ -34,9 +39,7 @@ export async function summary(
         .map(datetimeFromWorkfileLine);
 
     if (dates.length === 1) {
-        // empty workfile
-        console.log("Empty workfile, no summary to be shown");
-        return;
+        panic("Empty workfile, no summary to be shown");
     }
 
     const intervals = chunkBy(dates, 2);
@@ -50,4 +53,22 @@ export async function summary(
         })
         .join("\n");
     console.log(summary);
+}
+
+export async function summary(
+    workfilePath: string,
+    options: SummaryOptions
+): Promise<void> {
+    const { content: workfileContent, exists: workfileExists } =
+        await getWorkfileIfExists(workfilePath);
+    if (!workfileExists) {
+        panic("No workfile available");
+    }
+
+    const runningWork = getRunningWork(workfileContent);
+    if (runningWork) {
+        panic("Work still running, please end it before running summary");
+    }
+
+    await logSummary(workfileContent, options);
 }
