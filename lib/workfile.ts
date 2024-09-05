@@ -1,5 +1,20 @@
+import { resolve } from "node:path";
+import { homedir } from "node:os";
 import type { BunFile } from "bun";
 import { unlink } from "node:fs/promises";
+
+type ResolveWorkfilePathOptions = {
+    local: boolean;
+};
+
+export function resolveWorkfilePath(
+    options: Partial<ResolveWorkfilePathOptions> = {}
+): string {
+    const { local = false } = options;
+
+    const workfileDirectory = local ? "." : homedir();
+    return resolve(workfileDirectory, ".workfile");
+}
 
 async function readWorkfile(path: string): Promise<BunFile> {
     return Bun.file(path, {
@@ -7,8 +22,10 @@ async function readWorkfile(path: string): Promise<BunFile> {
     });
 }
 
-async function createWorkfile(path: string): Promise<void> {
-    console.log(`Creating workfile at ${path}...`);
+async function createWorkfile(path: string, { log = false }): Promise<void> {
+    if (log) {
+        console.log(`Creating workfile at ${path}...`);
+    }
     await Bun.write(path, "");
 }
 
@@ -17,7 +34,7 @@ async function getWorkfileContent(path: string): Promise<string> {
     const workfileExists = await workfile.exists();
 
     if (!workfileExists) {
-        await createWorkfile(path);
+        await createWorkfile(path, { log: true });
     }
 
     return await workfile.text();

@@ -1,12 +1,14 @@
+import { loadConfig } from "./lib/config";
 import { summary } from "./lib/summary";
 import {
     createUseWorkfile,
     datetimeFromWorkfileLine,
     deleteWorkfile,
+    resolveWorkfilePath,
 } from "./lib/workfile";
-import { resolve } from "path";
 
-const WORK_FILE = resolve(".", ".workfile");
+const config = await loadConfig();
+const WORK_FILE = resolveWorkfilePath({ local: config.localWorkfile });
 const useWorkfile = createUseWorkfile(WORK_FILE);
 
 export async function getRunningWork(): Promise<Date | null> {
