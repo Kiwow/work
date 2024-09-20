@@ -3,7 +3,6 @@ import {
     datetimeFromWorkfileLine,
     getRunningWork,
     getWorkfileIfExists,
-    readWorkfile,
 } from "./workfile";
 
 type TimeUnit = "minute" | "second";

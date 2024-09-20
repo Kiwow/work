@@ -38,15 +38,15 @@ export async function loadConfig(): Promise<WorkConfig> {
     const config = defaultWorkConfig();
 
     if (
-        parsedConfig.localWorkfile &&
-        typeof parsedConfig.localWorkfile === "boolean"
+        parsedConfig["localWorkfile"] &&
+        typeof parsedConfig["localWorkfile"] === "boolean"
     ) {
-        config.localWorkfile = parsedConfig.localWorkfile;
+        config.localWorkfile = parsedConfig["localWorkfile"];
     }
 
     // we have zod at home
     // TODO: add zod?
-    if (parsedConfig.summary) {
+    if (parsedConfig["summary"]) {
         // @ts-ignore
         config.summary = parsedConfig.summary;
     }
