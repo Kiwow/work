@@ -27,10 +27,10 @@ export type SummaryOptions = {
     separator: string;
 };
 
-export async function logSummary(
+export function logSummary(
     workfileContent: string,
     options: SummaryOptions
-): Promise<void> {
+): void {
     const { locale, unit, separator } = options;
 
     const dates = workfileContent
@@ -44,7 +44,6 @@ export async function logSummary(
 
     const intervals = chunkBy(dates, 2);
     const lengths = intervals.map(([from, to]) => dateDiff(from, to, unit));
-
     const summary = zip(intervals, lengths)
         .map(([[from, to], length]) => {
             const fromStr = from.toLocaleString(locale);
@@ -52,6 +51,7 @@ export async function logSummary(
             return fromStr.concat(separator, toStr, separator, `(${length})`);
         })
         .join("\n");
+
     console.log(summary);
 }
 
@@ -70,5 +70,5 @@ export async function summary(
         panic("Work still running, please end it before running summary");
     }
 
-    await logSummary(workfileContent, options);
+    logSummary(workfileContent, options);
 }
