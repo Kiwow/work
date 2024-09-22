@@ -9,7 +9,7 @@ type ResolveWorkfilePathOptions = {
 };
 
 export function resolveWorkfilePath(
-    options: Partial<ResolveWorkfilePathOptions> = {}
+    options: Partial<ResolveWorkfilePathOptions> = {},
 ): string {
     const { local = false } = options;
 
@@ -42,7 +42,7 @@ async function getWorkfileOrCreate(workfilePath: string): Promise<string> {
 }
 
 export async function getWorkfileIfExists(
-    workfilePath: string
+    workfilePath: string,
 ): Promise<
     { exists: true; content: string } | { exists: false; content: null }
 > {
@@ -98,7 +98,7 @@ export function getRunningWork(workfileContent: string): Date | null {
 
     if (!lastLine.startsWith("start")) {
         panic(
-            `Last line corrupted in workfile. file contents:\n${workfileContent}`
+            `Last line corrupted in workfile. file contents:\n${workfileContent}`,
         );
     }
 

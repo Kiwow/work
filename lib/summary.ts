@@ -28,7 +28,7 @@ export type SummaryOptions = {
 
 export function logSummary(
     workfileContent: string,
-    options: SummaryOptions
+    options: SummaryOptions,
 ): void {
     const { locale, unit, separator } = options;
 
@@ -56,7 +56,7 @@ export function logSummary(
 
 export async function summary(
     workfilePath: string,
-    options: SummaryOptions
+    options: SummaryOptions,
 ): Promise<void> {
     const { content: workfileContent, exists: workfileExists } =
         await getWorkfileIfExists(workfilePath);

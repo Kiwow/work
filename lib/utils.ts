@@ -20,14 +20,14 @@ type _TupleOf<T, N extends number, R extends unknown[]> = R["length"] extends N
  */
 export function chunkBy<T, ChunkSize extends number>(
     arr: Array<T>,
-    chunkSize: ChunkSize
+    chunkSize: ChunkSize,
 ): Array<Tuple<T, ChunkSize>> {
     if (chunkSize === 0) {
         throw new Error("chunkSize cannot be zero");
     }
     if (arr.length % chunkSize !== 0) {
         throw new Error(
-            `chunkBy: array of length ${arr.length} cannot be evenly chunked by ${chunkSize} items`
+            `chunkBy: array of length ${arr.length} cannot be evenly chunked by ${chunkSize} items`,
         );
     }
 
