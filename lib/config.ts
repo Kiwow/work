@@ -13,6 +13,7 @@ const defaultWorkConfig = (): WorkConfig => ({
         separator: " | ",
         locale: "cs-CZ",
         unit: "minute",
+        roundingMode: "none",
     },
 });
 
@@ -47,8 +48,7 @@ export async function loadConfig(): Promise<WorkConfig> {
     // we have zod at home
     // TODO: add zod?
     if (parsedConfig["summary"]) {
-        // @ts-ignore
-        config.summary = parsedConfig.summary;
+        config.summary = { ...config.summary, ...parsedConfig["summary"] };
     }
 
     return config;

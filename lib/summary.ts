@@ -1,3 +1,4 @@
+import { type RoundingMode, roundInterval } from "./rounding";
 import { chunkBy, panic, zip } from "./utils";
 import {
     datetimeFromWorkfileLine,
@@ -24,13 +25,14 @@ export type SummaryOptions = {
     locale: string;
     unit: TimeUnit;
     separator: string;
+    roundingMode: RoundingMode;
 };
 
 export function logSummary(
     workfileContent: string,
     options: SummaryOptions,
 ): void {
-    const { locale, unit, separator } = options;
+    const { locale, unit, separator, roundingMode } = options;
 
     const dates = workfileContent
         .trimEnd()
@@ -41,7 +43,9 @@ export function logSummary(
         panic("Empty workfile, no summary to be shown");
     }
 
-    const intervals = chunkBy(dates, 2);
+    const intervals = chunkBy(dates, 2).map((interval) =>
+        roundInterval(interval, roundingMode),
+    );
     const lengths = intervals.map(([from, to]) => dateDiff(from, to, unit));
     const summary = zip(intervals, lengths)
         .map(([[from, to], length]) => {
