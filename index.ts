@@ -9,8 +9,8 @@ import {
 } from "./lib/workfile";
 
 const config = await loadConfig();
-const WORK_FILE = resolveWorkfilePath({ local: config.localWorkfile });
-const useWorkfile = createUseWorkfile(WORK_FILE);
+const WORKFILE_PATH = resolveWorkfilePath({ local: config.localWorkfile });
+const useWorkfile = createUseWorkfile(WORKFILE_PATH);
 
 async function startWork() {
     const workfileContent = await useWorkfile();
@@ -24,7 +24,7 @@ async function startWork() {
 
     const newContent = workfileContent.concat(timestamp);
 
-    await Bun.write(WORK_FILE, newContent);
+    await Bun.write(WORKFILE_PATH, newContent);
 }
 
 async function endWork() {
@@ -38,7 +38,7 @@ async function endWork() {
     const timestamp = `end   ${datetime.toISOString()}\n`;
 
     const newContent = workfileContent.concat(timestamp);
-    await Bun.write(WORK_FILE, newContent);
+    await Bun.write(WORKFILE_PATH, newContent);
 }
 
 async function run(command: string) {
@@ -50,10 +50,10 @@ async function run(command: string) {
             await endWork();
             break;
         case "clean":
-            await deleteWorkfile(WORK_FILE);
+            await deleteWorkfile(WORKFILE_PATH);
             break;
         case "summary":
-            await summary(WORK_FILE, config.summary);
+            await summary(WORKFILE_PATH, config.summary);
             break;
         default:
             panic(`Unknown command: ${command}`);
