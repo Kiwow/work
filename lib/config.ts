@@ -1,6 +1,8 @@
 import { homedir } from "node:os";
-import { resolve } from "node:path";
+import { resolve, join } from "node:path";
 import type { SummaryOptions } from "./summary";
+
+const CONFIG_PATH = join(".config", "work.json");
 
 type WorkConfig = {
     localWorkfile: boolean;
@@ -24,17 +26,15 @@ async function getConfigFile(
         return await Bun.file(configPath).json();
     } catch (err) {
         if (err instanceof SyntaxError) {
-            console.error(
-                `Failed to read config file (using default):\n${err}`,
-            );
+            console.error("Failed to read config, using defaults");
         }
-        // no config file found, use defaults
-        return defaultWorkConfig();
+        // no config found, use default
+        return {};
     }
 }
 
 export async function loadConfig(): Promise<WorkConfig> {
-    const configPath = resolve(homedir(), ".work.config.json");
+    const configPath = resolve(homedir(), CONFIG_PATH);
     const parsedConfig = await getConfigFile(configPath);
     const config = defaultWorkConfig();
 
