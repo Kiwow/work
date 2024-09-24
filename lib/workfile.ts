@@ -38,7 +38,7 @@ async function getWorkfileOrCreate(workfilePath: string): Promise<string> {
         await createWorkfile(workfilePath, { log: true });
     }
 
-    return await workfile.text();
+    return workfile.text();
 }
 
 export async function getWorkfileIfExists(

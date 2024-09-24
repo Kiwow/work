@@ -23,7 +23,7 @@ async function getConfigFile(
     configPath: string,
 ): Promise<Record<string, unknown>> {
     try {
-        return await Bun.file(configPath).json();
+        return Bun.file(configPath).json();
     } catch (err) {
         if (err instanceof SyntaxError) {
             console.error("Failed to read config, using defaults");
