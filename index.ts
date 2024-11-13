@@ -3,7 +3,7 @@ import { summary } from "./lib/summary";
 import { panic } from "./lib/utils";
 import {
     createUseWorkfile,
-    deleteWorkfile,
+    cleanWorkfile,
     getRunningWork,
     resolveWorkfilePath,
 } from "./lib/workfile";
@@ -52,7 +52,7 @@ async function run(command: string) {
             await endWork();
             break;
         case "clean":
-            await deleteWorkfile(WORKFILE_PATH);
+            await cleanWorkfile(WORKFILE_PATH);
             break;
         case "summary":
             await summary(WORKFILE_PATH, config.summary);

@@ -98,7 +98,7 @@ export function createUseWorkfile(workfilePath: string): () => Promise<string> {
     };
 }
 
-export async function deleteWorkfile(workfilePath: string): Promise<void> {
+export async function cleanWorkfile(workfilePath: string): Promise<void> {
     const workfile = await readWorkfile(workfilePath);
     const workfileExists = await workfile.exists();
     if (!workfileExists) {
@@ -106,8 +106,10 @@ export async function deleteWorkfile(workfilePath: string): Promise<void> {
         return;
     }
 
-    // https://bun.sh/guides/write-file/unlink
     await unlink(workfilePath);
+    // overwrite the current workfile with an empty one
+    // if we simply delete the file then cleaning breaks local workfiles
+    await createWorkfile(workfilePath, { log: true });
 }
 
 export function datetimeFromWorkfileLine(line: string): Date {
