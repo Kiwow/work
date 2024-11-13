@@ -9,7 +9,9 @@ import {
 } from "./lib/workfile";
 
 const config = await loadConfig();
-const WORKFILE_PATH = resolveWorkfilePath({ local: config.localWorkfile });
+const WORKFILE_PATH = await resolveWorkfilePath({
+    local: config.localWorkfile,
+});
 const useWorkfile = createUseWorkfile(WORKFILE_PATH);
 
 async function startWork() {
