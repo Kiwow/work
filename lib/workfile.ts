@@ -24,10 +24,8 @@ async function searchForWorkfile() {
     let path = resolve(".workfile");
 
     while (dirname(path) !== home) {
-        console.log(`Looking for ${path}`);
         const file = Bun.file(path);
         if (await file.exists()) {
-            console.log("Exists, returning...");
             return path;
         }
 
