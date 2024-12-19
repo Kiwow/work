@@ -28,16 +28,13 @@ export type SummaryOptions = {
     roundingMode: RoundingMode;
 };
 
-export function logSummary(
-    workfileContent: string,
+export function getSummary(
+    workfileLines: string[],
     options: SummaryOptions,
-): void {
+): string {
     const { locale, unit, separator, roundingMode } = options;
 
-    const dates = workfileContent
-        .trimEnd()
-        .split("\n")
-        .map(datetimeFromWorkfileLine);
+    const dates = workfileLines.map(datetimeFromWorkfileLine);
 
     if (dates.length === 1) {
         panic("Empty workfile, no summary to be shown");
@@ -47,15 +44,13 @@ export function logSummary(
         roundInterval(interval, roundingMode),
     );
     const lengths = intervals.map(([from, to]) => dateDiff(from, to, unit));
-    const summary = zip(intervals, lengths)
+    return zip(intervals, lengths)
         .map(([[from, to], length]) => {
             const fromStr = from.toLocaleString(locale);
             const toStr = to.toLocaleString(locale);
             return fromStr.concat(separator, toStr, separator, `(${length})`);
         })
         .join("\n");
-
-    console.log(summary);
 }
 
 export async function summary(
@@ -69,9 +64,25 @@ export async function summary(
     }
 
     const runningWork = getRunningWork(workfileContent);
+
+    const workfileLines = workfileContent.trimEnd().split("\n");
+
     if (runningWork) {
-        panic("Work still running, please end it before running summary");
+        const lastLine = workfileLines.at(-1);
+        if (lastLine === undefined) {
+            panic("Work is running and failed to get workfile last line (???)");
+        }
+        const summaryExceptEnd = getSummary(
+            workfileLines.slice(0, -1),
+            options,
+        );
+        console.log(summaryExceptEnd);
+        console.log(
+            `\nWork running, started at ${datetimeFromWorkfileLine(lastLine).toLocaleString(options.locale)}`,
+        );
+        return;
     }
 
-    logSummary(workfileContent, options);
+    const summary = getSummary(workfileLines, options);
+    console.log(summary);
 }
