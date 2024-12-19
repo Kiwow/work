@@ -55,6 +55,7 @@ async function run(command: string) {
             await cleanWorkfile(WORKFILE_PATH);
             break;
         case "summary":
+        case "status":
             await summary(WORKFILE_PATH, config.summary);
             break;
         default:
