@@ -39,7 +39,7 @@ async function searchForWorkfile() {
     console.log(
         `No local workfile found, falling back to home directory: ${home}`,
     );
-    return home;
+    return join(home, ".workfile");
 }
 
 export async function readWorkfile(path: string): Promise<BunFile> {
