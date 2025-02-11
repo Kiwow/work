@@ -50,6 +50,9 @@ async function run(command: string) {
             break;
         case "end":
             await endWork();
+            // after we end work, print the summary
+            // TODO add option to opt-out
+            await summary(WORKFILE_PATH, config.summary);
             break;
         case "clean":
             await cleanWorkfile(WORKFILE_PATH);

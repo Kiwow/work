@@ -66,3 +66,59 @@ export function panic(message: string, exitCode = 1): never {
     console.error(message);
     process.exit(exitCode);
 }
+
+export class Interval {
+    private days: number;
+    private hours: number;
+    private minutes: number;
+
+    constructor(start: Date, end: Date) {
+        let millisDiff = Number(end) - Number(start);
+        [this.days, millisDiff] = Interval.millisToDays(millisDiff);
+        [this.hours, millisDiff] = Interval.millisToHours(millisDiff);
+        [this.minutes, millisDiff] = Interval.millisToMinutes(millisDiff);
+    }
+
+    private static formatNumberWithUnit(
+        value: number,
+        unitName: string,
+    ): string {
+        return `${value} ${value === 1 ? unitName : unitName.concat("s")}`;
+    }
+
+    toString(): string {
+        return (
+            [
+                [this.days, "day"],
+                [this.hours, "hour"],
+                [this.minutes, "minute"],
+            ] as const
+        )
+            .filter(([value, _]) => value !== 0)
+            .flatMap(([value, unitName]) =>
+                Interval.formatNumberWithUnit(value, unitName),
+            )
+            .join(" ");
+    }
+
+    private static millisToDays(millisDiff: number): [number, number] {
+        const millisecondsInDay = 24 * 60 * 60 * 1000;
+        const dayDiff = Math.floor(millisDiff / millisecondsInDay);
+        const restOfMillis = millisDiff % millisecondsInDay;
+        return [dayDiff, restOfMillis];
+    }
+
+    private static millisToHours(millisDiff: number): [number, number] {
+        const millisecondsInHour = 60 * 60 * 1000;
+        const hourDiff = Math.floor(millisDiff / millisecondsInHour);
+        const restOfMillis = millisDiff % millisecondsInHour;
+        return [hourDiff, restOfMillis];
+    }
+
+    private static millisToMinutes(millisDiff: number): [number, number] {
+        const millisecondsInMinute = 60 * 1000;
+        const minuteDiff = Math.floor(millisDiff / millisecondsInMinute);
+        const restOfMillis = millisDiff % millisecondsInMinute;
+        return [minuteDiff, restOfMillis];
+    }
+}
