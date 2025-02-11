@@ -14,7 +14,6 @@ const defaultWorkConfig = (): WorkConfig => ({
     summary: {
         separator: " | ",
         locale: "cs-CZ",
-        unit: "minute",
         roundingMode: "none",
     },
 });
