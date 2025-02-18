@@ -18,18 +18,16 @@ const defaultWorkConfig = (): WorkConfig => ({
     },
 });
 
-async function getConfigFile(
-    configPath: string,
-): Promise<Record<string, unknown>> {
-    try {
-        return Bun.file(configPath).json();
-    } catch (err) {
-        if (err instanceof SyntaxError) {
-            console.error("Failed to read config, using defaults");
-        }
-        // no config found, use default
-        return {};
-    }
+function getConfigFile(configPath: string): Promise<Record<string, unknown>> {
+    return Bun.file(configPath)
+        .json()
+        .catch((err: unknown) => {
+            if (err instanceof SyntaxError) {
+                console.error("Failed to read config, using defaults");
+            }
+            // no config found, use default
+            return {};
+        });
 }
 
 export async function loadConfig(): Promise<WorkConfig> {
