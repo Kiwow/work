@@ -30,10 +30,8 @@ async function searchForWorkfile() {
 
     while (dirname(path) !== home) {
         try {
-            const file = await readFile(path, {
-                encoding: "utf-8",
-            });
-            return file;
+            await access(path, constants.F_OK);
+            return path;
         } catch {}
 
         const parentPath = join(dirname(path), "..", ".workfile");
