@@ -72,8 +72,18 @@ export class Interval {
     private hours: number;
     private minutes: number;
 
-    constructor(start: Date, end: Date) {
-        let millisDiff = Number(end) - Number(start);
+    constructor(startOrMillisDiff: Date | number, end?: Date) {
+        if (typeof startOrMillisDiff === "number" && end) {
+            throw new TypeError(
+                "millisDiff passed but end Date was also passed to Interval constructor",
+            );
+        }
+
+        let millisDiff =
+            startOrMillisDiff instanceof Date
+                ? Number(end) - Number(startOrMillisDiff)
+                : startOrMillisDiff;
+
         [this.days, millisDiff] = Interval.millisToDays(millisDiff);
         [this.hours, millisDiff] = Interval.millisToHours(millisDiff);
         [this.minutes, millisDiff] = Interval.millisToMinutes(millisDiff);

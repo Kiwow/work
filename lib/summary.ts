@@ -1,4 +1,4 @@
-import { toDateTimeString, toTimeString } from "./datetime";
+import { toDateString, toDateTimeString, toTimeString } from "./datetime";
 import { type RoundingMode, roundInterval } from "./rounding";
 import { chunkBy, Interval, panic, zip } from "./utils";
 import {
@@ -90,5 +90,44 @@ export async function summary(
     }
 
     const summary = getSummary(workfileLines, options);
-    console.log(summary);
+    const metaSummary = getMetaSummary(workfileLines, options);
+    console.log(summary.concat("\n\n", metaSummary));
+}
+
+function getMetaSummary(
+    workfileLines: string[],
+    { roundingMode, locale }: Pick<SummaryOptions, "roundingMode" | "locale">,
+) {
+    const dates = workfileLines.map(datetimeFromWorkfileLine);
+
+    if (dates.length === 1) {
+        panic("Empty workfile, no summary to be shown");
+    }
+
+    const intervals = chunkBy(dates, 2).map((interval) =>
+        roundInterval(interval, roundingMode),
+    );
+
+    const groupsByDay = Map.groupBy(intervals, (interval) =>
+        new Date(interval[1]).toDateString(),
+    );
+
+    let formatted = "";
+    for (const intervals of groupsByDay.values()) {
+        const totalMillis = intervals.reduce(
+            (acc, interval) =>
+                acc + (interval[1].getTime() - interval[0].getTime()),
+            0,
+        );
+        const totalDuration = new Interval(totalMillis);
+
+        const formattedDay =
+            locale === "cs-CZ"
+                ? toDateString(intervals[0][1])
+                : intervals[0][1].toLocaleString(locale);
+
+        formatted += `On ${formattedDay}, ${totalDuration} in total\n`;
+    }
+
+    return formatted;
 }

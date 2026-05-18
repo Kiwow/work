@@ -60,7 +60,7 @@ async function getWorkfileOrCreate(workfilePath: string): Promise<string> {
     const workfileExists = await workfile.exists();
 
     if (!workfileExists) {
-        await createWorkfile(join(workfilePath, ".workfile"), { log: true });
+        await createWorkfile(workfilePath, { log: true });
     }
 
     return workfile.text();
