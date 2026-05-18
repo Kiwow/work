@@ -1,8 +1,13 @@
 import { resolve, dirname, join } from "node:path";
 import { homedir } from "node:os";
-import type { BunFile } from "bun";
-import { unlink } from "node:fs/promises";
-import { panic } from "./utils";
+import {
+    access,
+    constants,
+    readFile,
+    unlink,
+    writeFile,
+} from "node:fs/promises";
+import { panic } from "./utils.ts";
 
 type ResolveWorkfilePathOptions = {
     local: boolean;
@@ -24,10 +29,12 @@ async function searchForWorkfile() {
     let path = resolve(".workfile");
 
     while (dirname(path) !== home) {
-        const file = Bun.file(path);
-        if (await file.exists()) {
-            return path;
-        }
+        try {
+            const file = await readFile(path, {
+                encoding: "utf-8",
+            });
+            return file;
+        } catch {}
 
         const parentPath = join(dirname(path), "..", ".workfile");
         if (parentPath === path) {
@@ -42,9 +49,9 @@ async function searchForWorkfile() {
     return join(home, ".workfile");
 }
 
-export async function readWorkfile(path: string): Promise<BunFile> {
-    return Bun.file(path, {
-        type: "text/plain;charset=utf-8",
+export async function readWorkfile(path: string): Promise<string> {
+    return await readFile(path, {
+        encoding: "utf-8",
     });
 }
 
@@ -52,18 +59,20 @@ async function createWorkfile(path: string, { log = false }): Promise<void> {
     if (log) {
         console.log(`Creating workfile at ${path}...`);
     }
-    await Bun.write(path, "");
+    await writeFile(path, "", {
+        encoding: "utf-8",
+    });
 }
 
 async function getWorkfileOrCreate(workfilePath: string): Promise<string> {
-    const workfile = await readWorkfile(workfilePath);
-    const workfileExists = await workfile.exists();
-
-    if (!workfileExists) {
+    let workfileContents = "";
+    try {
+        workfileContents = await readWorkfile(workfilePath);
+    } catch {
         await createWorkfile(workfilePath, { log: true });
     }
 
-    return workfile.text();
+    return workfileContents;
 }
 
 export async function getWorkfileIfExists(
@@ -71,19 +80,18 @@ export async function getWorkfileIfExists(
 ): Promise<
     { exists: true; content: string } | { exists: false; content: null }
 > {
-    const workfile = await readWorkfile(workfilePath);
-    const workfileExists = await workfile.exists();
-    if (workfileExists) {
+    try {
+        const workfileContents = await readWorkfile(workfilePath);
         return {
             exists: true,
-            content: await workfile.text(),
+            content: workfileContents,
+        };
+    } catch {
+        return {
+            exists: false,
+            content: null,
         };
     }
-
-    return {
-        exists: false,
-        content: null,
-    };
 }
 
 export function createUseWorkfile(workfilePath: string): () => Promise<string> {
@@ -97,17 +105,16 @@ export function createUseWorkfile(workfilePath: string): () => Promise<string> {
 }
 
 export async function cleanWorkfile(workfilePath: string): Promise<void> {
-    const workfile = await readWorkfile(workfilePath);
-    const workfileExists = await workfile.exists();
-    if (!workfileExists) {
-        console.log("No workfile present, nothing to clean");
-        return;
-    }
+    try {
+        await access(workfilePath, constants.F_OK);
 
-    await unlink(workfilePath);
-    // overwrite the current workfile with an empty one
-    // if we simply delete the file then cleaning breaks local workfiles
-    await createWorkfile(workfilePath, { log: true });
+        await unlink(workfilePath);
+        // overwrite the current workfile with an empty one
+        // if we simply delete the file then cleaning breaks local workfiles
+        await createWorkfile(workfilePath, { log: true });
+    } catch {
+        console.log("No workfile present, nothing to clean");
+    }
 }
 
 export function datetimeFromWorkfileLine(line: string): Date {
