@@ -51,7 +51,7 @@ export function getSummary(
 
             const toStr =
                 locale === "cs-CZ"
-                    ? toDateTimeString(from)
+                    ? toDateTimeString(to)
                     : to.toLocaleString(locale);
             return fromStr.concat(separator, toStr, separator, `(${length})`);
         })
