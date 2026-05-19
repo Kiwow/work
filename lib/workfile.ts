@@ -56,14 +56,12 @@ async function createWorkfile(path: string, { log = false }): Promise<void> {
 }
 
 async function getWorkfileOrCreate(workfilePath: string): Promise<string> {
-    let workfileContents = "";
     try {
-        workfileContents = await readWorkfile(workfilePath);
+        return await readWorkfile(workfilePath);
     } catch {
         await createWorkfile(workfilePath, { log: true });
+        return "";
     }
-
-    return workfileContents;
 }
 
 export async function getWorkfileIfExists(
