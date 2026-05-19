@@ -3,6 +3,9 @@
     "version": "0.1.0",
     "module": "index.ts",
     "type": "module",
+    "scripts": {
+        "check": "tsc --noEmit"
+    },
     "devDependencies": {
         "@types/node": "^24",
         "typescript": "^6.0.0"
