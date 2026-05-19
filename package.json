@@ -3,13 +3,15 @@
     "version": "0.1.0",
     "module": "index.ts",
     "type": "module",
-    "devDependencies": {
-        "@types/bun": "latest"
+    "scripts": {
+        "check": "tsc --noEmit"
     },
-    "peerDependencies": {
-        "typescript": "^5.0.0"
+    "devDependencies": {
+        "@types/node": "^24",
+        "typescript": "^6.0.0"
     },
     "prettier": {
         "tabWidth": 4
-    }
+    },
+    "packageManager": "pnpm@11.1.2+sha512.415a1cc25974731e75455c1468371be74c5aa5fb7621b50d4056d222451609f11412f23fd602e6169f1e060466641f798597e1be961a10688836a67b16569499"
 }

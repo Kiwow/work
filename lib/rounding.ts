@@ -1,4 +1,4 @@
-import { panic } from "./utils";
+import { panic } from "./utils.ts";
 
 export type RoundingMode = "none" | "floor" | "ceil" | "closest" | "expand";
 

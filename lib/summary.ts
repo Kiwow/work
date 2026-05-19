@@ -1,11 +1,11 @@
-import { toDateString, toDateTimeString, toTimeString } from "./datetime";
-import { type RoundingMode, roundInterval } from "./rounding";
-import { chunkBy, Interval, panic, zip } from "./utils";
+import { toDateString, toDateTimeString, toTimeString } from "./datetime.ts";
+import { type RoundingMode, roundInterval } from "./rounding.ts";
+import { chunkBy, Interval, panic, zip } from "./utils.ts";
 import {
     datetimeFromWorkfileLine,
     getRunningWork,
     getWorkfileIfExists,
-} from "./workfile";
+} from "./workfile.ts";
 
 export type SummaryOptions = {
     locale: string;

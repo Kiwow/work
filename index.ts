@@ -1,12 +1,13 @@
-import { loadConfig } from "./lib/config";
-import { summary } from "./lib/summary";
-import { panic } from "./lib/utils";
+import { writeFile } from "node:fs/promises";
+import { loadConfig } from "./lib/config.ts";
+import { summary } from "./lib/summary.ts";
+import { panic } from "./lib/utils.ts";
 import {
     createUseWorkfile,
     cleanWorkfile,
     getRunningWork,
     resolveWorkfilePath,
-} from "./lib/workfile";
+} from "./lib/workfile.ts";
 
 const config = await loadConfig();
 const WORKFILE_PATH = await resolveWorkfilePath({
@@ -26,7 +27,9 @@ async function startWork() {
 
     const newContent = workfileContent.concat(timestamp);
 
-    await Bun.write(WORKFILE_PATH, newContent);
+    await writeFile(WORKFILE_PATH, newContent, {
+        encoding: "utf-8",
+    });
 }
 
 async function endWork() {
@@ -40,7 +43,9 @@ async function endWork() {
     const timestamp = `end   ${datetime.toISOString()}\n`;
 
     const newContent = workfileContent.concat(timestamp);
-    await Bun.write(WORKFILE_PATH, newContent);
+    await writeFile(WORKFILE_PATH, newContent, {
+        encoding: "utf-8",
+    });
 }
 
 async function run(command: string) {

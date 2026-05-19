@@ -1,0 +1,7 @@
+minimumReleaseAge: 10080
+minimumReleaseAgeIgnoreMissingTime: false
+trustPolicy: no-downgrade
+
+enableGlobalVirtualStore: true
+dedupePeerDependents: true
+strictPeerDependencies: true
