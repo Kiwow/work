@@ -1,12 +1,6 @@
 import { resolve, dirname, join } from "node:path";
 import { homedir } from "node:os";
-import {
-    access,
-    constants,
-    readFile,
-    unlink,
-    writeFile,
-} from "node:fs/promises";
+import { readFile, stat, unlink, writeFile } from "node:fs/promises";
 import { panic } from "./utils.ts";
 
 type ResolveWorkfilePathOptions = {
@@ -29,10 +23,9 @@ async function searchForWorkfile() {
     let path = resolve(".workfile");
 
     while (dirname(path) !== home) {
-        try {
-            await access(path, constants.F_OK);
+        if (await isExistingFile(path)) {
             return path;
-        } catch {}
+        }
 
         const parentPath = join(dirname(path), "..", ".workfile");
         if (parentPath === path) {
@@ -103,14 +96,12 @@ export function createUseWorkfile(workfilePath: string): () => Promise<string> {
 }
 
 export async function cleanWorkfile(workfilePath: string): Promise<void> {
-    try {
-        await access(workfilePath, constants.F_OK);
-
+    if (await isExistingFile(workfilePath)) {
         await unlink(workfilePath);
         // overwrite the current workfile with an empty one
         // if we simply delete the file then cleaning breaks local workfiles
         await createWorkfile(workfilePath, { log: true });
-    } catch {
+    } else {
         console.log("No workfile present, nothing to clean");
     }
 }
@@ -135,4 +126,13 @@ export function getRunningWork(workfileContent: string): Date | null {
     }
 
     return datetimeFromWorkfileLine(lastLine);
+}
+
+/**
+ * @returns true if there's a regular file at the given path, false otherwise
+ */
+function isExistingFile(path: string): Promise<boolean> {
+    return stat(path)
+        .then((info) => info && info.isFile())
+        .catch(() => false);
 }
