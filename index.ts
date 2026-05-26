@@ -8,6 +8,7 @@ import {
     getRunningWork,
     resolveWorkfilePath,
 } from "./lib/workfile.ts";
+import { openWorkfileForEdit } from "./lib/edit.ts";
 
 const config = await loadConfig();
 const WORKFILE_PATH = await resolveWorkfilePath({
@@ -65,6 +66,9 @@ async function run(command: string) {
         case "summary":
         case "status":
             await summary(WORKFILE_PATH, config.summary);
+            break;
+        case "edit":
+            openWorkfileForEdit(WORKFILE_PATH);
             break;
         default:
             panic(`Unknown command: ${command}`);
