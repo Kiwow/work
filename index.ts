@@ -69,6 +69,7 @@ async function run(command: string) {
             break;
         case "edit":
             openWorkfileForEdit(WORKFILE_PATH);
+            await summary(WORKFILE_PATH, config.summary);
             break;
         default:
             panic(`Unknown command: ${command}`);
