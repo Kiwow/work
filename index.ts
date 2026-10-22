@@ -8,6 +8,7 @@ import {
     getRunningWork,
     resolveWorkfilePath,
 } from "./lib/workfile.ts";
+import { openWorkfileForEdit } from "./lib/edit.ts";
 
 const config = await loadConfig();
 const WORKFILE_PATH = await resolveWorkfilePath({
@@ -64,6 +65,10 @@ async function run(command: string) {
             break;
         case "summary":
         case "status":
+            await summary(WORKFILE_PATH, config.summary);
+            break;
+        case "edit":
+            openWorkfileForEdit(WORKFILE_PATH);
             await summary(WORKFILE_PATH, config.summary);
             break;
         default:
