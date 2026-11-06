@@ -1,5 +1,9 @@
 import { toDateString, toDateTimeString, toTimeString } from "./datetime.ts";
-import { type RoundingMode, roundInterval } from "./rounding.ts";
+import {
+    intervalToTemporalDuration,
+    type RoundingMode,
+    roundInterval,
+} from "./rounding.ts";
 import { chunkBy, Interval, panic, zip } from "./utils.ts";
 import {
     datetimeFromWorkfileLine,
@@ -121,13 +125,49 @@ function getMetaSummary(
         );
         const totalDuration = new Interval(totalMillis);
 
+        // Map.groupBy never produces empty groups
+        const dayEnd = intervals[0]![1];
         const formattedDay =
             locale === "cs-CZ"
-                ? toDateString(intervals[0][1])
-                : intervals[0][1].toLocaleString(locale);
+                ? toDateString(dayEnd)
+                : dayEnd.toLocaleString(locale);
 
         formatted += `On ${formattedDay}, ${totalDuration} in total\n`;
     }
 
+    formatted += "\n";
+
+    const groupsByMonth = Map.groupBy(intervals, (interval) => {
+        const endDate = instantToPraguePlainDate(
+            interval[1].toTemporalInstant(),
+        );
+        return endDate.monthCode;
+    });
+
+    for (const month of groupsByMonth.values()) {
+        const dayInMonth = instantToPraguePlainDate(
+            month[0]![0].toTemporalInstant(),
+        );
+        const monthName = dayInMonth.toLocaleString("en-GB", {
+            month: "long",
+        });
+
+        const monthTotal = month
+            .values()
+            .map((interval) => intervalToTemporalDuration(interval))
+            .reduce((acc, x) => acc.add(x))
+            .round({ largestUnit: "hour", smallestUnit: "minute" })
+            .toLocaleString("en-GB", { style: "long" });
+
+        formatted += `In ${`${monthName},`.padEnd(10)} ${monthTotal} total\n`;
+    }
+
     return formatted;
+}
+
+function instantToPraguePlainDate(instant: Temporal.Instant) {
+    return new Temporal.ZonedDateTime(
+        instant.epochNanoseconds,
+        "Europe/Prague",
+    ).toPlainDate();
 }

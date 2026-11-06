@@ -76,7 +76,8 @@ async function run(command: string) {
     }
 }
 
-if (process.argv.length < 3) {
+const command = process.argv[2];
+if (command === undefined) {
     panic("Provide a command");
 }
-await run(process.argv[2]);
+await run(command);

@@ -33,11 +33,7 @@ export function chunkBy<T, ChunkSize extends number>(
 
     const chunks: Array<Tuple<T, ChunkSize>> = [];
     for (let i = 0; i < arr.length; i += chunkSize) {
-        const chunk = new Array(chunkSize) as Tuple<T, ChunkSize>;
-        for (let j = 0; j < chunkSize; j++) {
-            chunk[j] = arr[i + j];
-        }
-        chunks.push(chunk);
+        chunks.push(arr.slice(i, i + chunkSize) as Tuple<T, ChunkSize>);
     }
     return chunks;
 }
@@ -57,7 +53,8 @@ export function zip<T, U>(one: Array<T>, other: Array<U>): Array<[T, U]> {
 
     const zipped: Array<[T, U]> = [];
     for (let i = 0; i < Math.min(one.length, other.length); i++) {
-        zipped.push([one[i], other[i]]);
+        // `i` is always a valid index of both arrays
+        zipped.push([one[i]!, other[i]!]);
     }
     return zipped;
 }

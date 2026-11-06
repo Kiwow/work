@@ -19,6 +19,14 @@ export function roundInterval(
     ];
 }
 
+export function intervalToTemporalDuration(
+    interval: Interval,
+): Temporal.Duration {
+    return interval[0]
+        .toTemporalInstant()
+        .until(interval[1].toTemporalInstant());
+}
+
 export function round(datetime: Date, options: RoundOptions): Date {
     const { roundingMode, isStart } = options;
     switch (roundingMode) {

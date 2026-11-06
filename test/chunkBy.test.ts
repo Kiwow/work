@@ -1,5 +1,5 @@
-import { test, expect } from "bun:test";
-import { chunkBy } from "../lib/utils";
+import { test, expect } from "vitest";
+import { chunkBy } from "../lib/utils.ts";
 
 const range = (end: number) => {
     const result = [];

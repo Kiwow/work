@@ -3,5 +3,29 @@
 // For a full list of overridable settings, and general information on folder-specific settings,
 // see the documentation: https://zed.dev/docs/configuring-zed#settings-files
 {
-    "tab_size": 4
+    "tab_size": 4,
+    "languages": {
+        "TypeScript": {
+            // Zed's default vtsls needs the JS tsserver, which TypeScript 7 no longer ships, so it
+            // silently falls back to its bundled TS 5.9 (no Temporal/es2025 libs). Use TS 7's
+            // native server instead. `typescript-ls` is registered by the "TypeScript Language
+            // Server" (`tsgo`) extension, which must be installed for this to work.
+            "language_servers": [
+                "typescript-ls",
+                "!vtsls",
+                "!typescript-language-server",
+                "...",
+            ],
+        },
+    },
+    "lsp": {
+        "typescript-ls": {
+            // Run the project's local TypeScript instead of the extension's own download, so the
+            // editor always matches `tsc` and the lockfile (incl. pnpm's minimumReleaseAge).
+            "binary": {
+                "path": "node_modules/.bin/tsc",
+                "arguments": ["--lsp", "--stdio"],
+            },
+        },
+    },
 }

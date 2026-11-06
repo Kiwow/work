@@ -1,5 +1,5 @@
-import { test, expect, describe } from "bun:test";
-import { round, type RoundingMode } from "../lib/rounding";
+import { test, expect, describe } from "vitest";
+import { round, type RoundingMode } from "../lib/rounding.ts";
 
 const basicOptions = (roundingMode: RoundingMode) =>
     ({

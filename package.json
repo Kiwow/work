@@ -4,14 +4,28 @@
     "module": "index.ts",
     "type": "module",
     "scripts": {
-        "check": "tsc --noEmit"
+        "check:typescript": "tsc --noEmit",
+        "check:test": "vitest run",
+        "test": "vitest"
     },
     "devDependencies": {
-        "@types/node": "^24",
-        "typescript": "^6.0.0"
+        "@types/node": "^26.6.6",
+        "typescript": "^7.0.2",
+        "vitest": "^5.0.5"
     },
     "prettier": {
         "tabWidth": 4
     },
-    "packageManager": "pnpm@11.1.2+sha512.415a1cc25974731e75455c1468371be74c5aa5fb7621b50d4056d222451609f11412f23fd602e6169f1e060466641f798597e1be961a10688836a67b16569499"
+    "devEngines": {
+        "packageManager": {
+            "name": "pnpm",
+            "version": "^12.16.1",
+            "onFail": "download"
+        },
+        "runtime": {
+            "name": "node",
+            "version": "^26.13.0",
+            "onFail": "download"
+        }
+    }
 }
